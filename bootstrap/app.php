@@ -1,5 +1,7 @@
 <?php
 
+use Monolog\Handler\LogEntriesHandler;
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
@@ -95,6 +97,13 @@ $app->register(App\Providers\AuthServiceProvider::class);
 
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
     require __DIR__.'/../app/Http/routes.php';
+});
+
+$app->configureMonologUsing(function($monolog) {
+	$logEntriesHandler = new LogEntriesHandler(env('LOGENTRIES_TOKEN'));
+    $monolog->pushHandler($logEntriesHandler);
+
+    return $monolog;
 });
 
 return $app;
