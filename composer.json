@@ -8,7 +8,8 @@
         "php": ">=5.5.9",
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
-        "giggsey/libphonenumber-for-php": "^7.4"
+        "giggsey/libphonenumber-for-php": "^7.4",
+        "logentries/logentries-monolog-handler": "^2.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

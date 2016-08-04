@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Traits\ParseNumbers;
 use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Log;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -38,13 +39,15 @@ class UsersController extends Controller
             return response()->json([
                 "error"=>[
                     "type"=>"QueryException",
-                    "message"=>$e->errorInfo    ,
+                    "message"=>$e->errorInfo,
                     "status_code" => 400
                 ]
             ],400);
         }
 
-        return response()->json([
+        Log::info("User Created", ["user"=>$savedUser->name,"phone"=>$savedUser->phone]);
+
+        return response()->json([  
             "success"=>[
                 "status_code"=>200,
                 "message" => "A new user has been created! Keep fighting the battle.",
@@ -63,7 +66,7 @@ class UsersController extends Controller
             $user = User::where("phone",$number)->firstOrFail();
 
         } catch(ModelNotFoundException $e) {
-        
+            
             return response()->json([
                 "error"=>[
                     "type"=>"ModelNotFoundException",
@@ -72,6 +75,8 @@ class UsersController extends Controller
                 ]
             ],404);
         }
+
+        Log::info("User is logged in", ["user"=>$user->name,"phone"=>$user->phone]);
 
         return response()->json([
             "success"=>[
@@ -99,6 +104,7 @@ class UsersController extends Controller
             ],404);
         }
 
+        Log::info("Showing User", ["user"=>$user->name,"phone"=>$user->phone]);
 
         return response()->json([
             "success"=>[
@@ -131,6 +137,8 @@ class UsersController extends Controller
         $user->friends()->sync($friendIds->toArray());
 
         $user = User::where("id",$user->id)->with("friends")->first();
+
+        Log::info("Getting friends for User", ["user"=>$user->name,"phone"=>$user->phone,"contact_count"=>$user->friends->count()]);
 
         return response()->json([
             "success"=>[
