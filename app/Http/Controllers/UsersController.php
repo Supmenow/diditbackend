@@ -38,7 +38,7 @@ class UsersController extends Controller
             return response()->json([
                 "error"=>[
                     "type"=>"QueryException",
-                    "message"=>$e->errorInfo[2],
+                    "message"=>$e->errorInfo    ,
                     "status_code" => 400
                 ]
             ],400);
@@ -80,7 +80,7 @@ class UsersController extends Controller
                 "user" => $user
             ]
         ]); 
-        
+
     }
 
     public function show(Request $request)

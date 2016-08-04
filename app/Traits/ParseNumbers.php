@@ -2,6 +2,9 @@
 
 namespace App\Traits;
 
+
+use Log;
+
 trait ParseNumbers
 {
 
@@ -18,9 +21,13 @@ trait ParseNumbers
             $number = $phoneUtil->parse($number, "GB");
 
         } catch (\libphonenumber\NumberParseException $e) {
+
             Log::info("Failed Phone Number Parse");
         }
 
-        return $number->getNationalNumber();
+        // Check if is object and has been handled by parseNumber
+        if( is_object($number) ) return $number->getNationalNumber();
+
+        return null;
     }
 }
