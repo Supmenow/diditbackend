@@ -130,7 +130,7 @@ class UsersController extends Controller
         
         $user->friends()->sync($friendIds->toArray());
 
-        $user = User::where("id",$user->id)->with("friends")->get();
+        $user = User::where("id",$user->id)->with("friends")->first();
 
         return response()->json([
             "success"=>[
