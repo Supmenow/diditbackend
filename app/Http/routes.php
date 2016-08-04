@@ -27,6 +27,9 @@ $app->group(['prefix' => 'api/v1','middleware'=>'auth','namespace'=>"App\Http\Co
 	// Create a user
 	$app->post('users', "UsersController@store");
 
+	// Check a user exits
+	$app->post('check', "UsersController@check");
+
 	// Get a user
 	$app->get('users', "UsersController@show");	
 

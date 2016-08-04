@@ -53,6 +53,36 @@ class UsersController extends Controller
         ]); 
     }
 
+    public function check(Request $request)
+    {
+        $this->validate($request, ['phone' => 'required']);
+
+        $number = $this->parseNumber($request->input("phone"));
+
+        try {   
+            $user = User::where("phone",$number)->firstOrFail();
+
+        } catch(ModelNotFoundException $e) {
+        
+            return response()->json([
+                "error"=>[
+                    "type"=>"ModelNotFoundException",
+                    "message"=>"No such user exits.",
+                    "status_code" => 404
+                ]
+            ],404);
+        }
+
+        return response()->json([
+            "success"=>[
+                "status_code"=>200,
+                "message" => "A user you have asked for, a user you shall receive.",
+                "user" => $user
+            ]
+        ]); 
+        
+    }
+
     public function show(Request $request)
     {
         try {   
