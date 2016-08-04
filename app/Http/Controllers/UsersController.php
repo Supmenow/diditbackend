@@ -130,10 +130,11 @@ class UsersController extends Controller
             $phoneArray->push($number);
         }
 
-        $friend = User::whereIn("phone",$phoneArray)->get();
+        $friend = User::whereIn("phone",$phoneArray)->where("phone","!=",$user->phone)->groupBy("phone")->get();
 
         $friendIds = $friend->pluck("id");
-        
+
+
         $user->friends()->sync($friendIds->toArray());
 
         $user = User::where("id",$user->id)->with("friends")->first();
