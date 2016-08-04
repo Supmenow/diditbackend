@@ -39,7 +39,7 @@ class UsersController extends Controller
             return response()->json([
                 "error"=>[
                     "type"=>"QueryException",
-                    "message"=>$e->errorInfo,
+                    "message"=>$e->errorInfo[2],
                     "status_code" => 400
                 ]
             ],400);
@@ -51,7 +51,7 @@ class UsersController extends Controller
             "success"=>[
                 "status_code"=>200,
                 "message" => "A new user has been created! Keep fighting the battle.",
-                "data" => $savedUser
+                "user" => $savedUser
             ]
         ]); 
     }
