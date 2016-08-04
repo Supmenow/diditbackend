@@ -22,7 +22,7 @@ trait ParseNumbers
 
         } catch (\libphonenumber\NumberParseException $e) {
 
-            Log::info("Failed Phone Number Parse");
+            Log::info("Failed Phone Number Parse",["number"=>$number]);
         }
 
         // Check if is object and has been handled by parseNumber
