@@ -46,4 +46,30 @@ class UsersController extends Controller
             ]
         ]); 
     }
+
+    public function show(Request $request)
+    {
+        try {   
+            $user = User::where("id",$request->user()->id)->get();
+
+        } catch(ModelNotFoundException $e) {
+        
+            return response()->json([
+                "error"=>[
+                    "type"=>"ModelNotFoundException",
+                    "message"=>"No such user exits.",
+                    "status_code" => 404
+                ]
+            ],404);
+        }
+
+
+        return response()->json([
+            "success"=>[
+                "status_code"=>200,
+                "message" => "A user you have asked for, a user you shall receive.",
+                "user" => $user
+            ]
+        ]); 
+    }
 }
