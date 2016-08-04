@@ -12,3 +12,9 @@ The API for the Did it app
 1. GET to http://139.59.184.179/api/v1/users (IP will change to URI soon)
 2. Pass api-key in header as user api-key
 3. You will recieve a 200 response with user.
+
+# Get friends
+1. POST to http://139.59.184.179/api/v1/contacts (IP will change to URI soon)
+2. Pass api-key in header as user api-key
+3. Pass a list of phone numbers {"numbers":["+331234123123","(+44)1234233123","00449384123123","07384123123","019384123123"]}
+4. You will get the user back and the friends

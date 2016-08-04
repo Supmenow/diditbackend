@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ParseNumbers;
 use App\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
+
+    use ParseNumbers;
 
     /**
      * Creates a user
@@ -24,6 +28,8 @@ class UsersController extends Controller
             $input = $request->input();
 
             $input['api-key'] = bin2hex(openssl_random_pseudo_bytes(32));
+
+            $input['phone'] = $this->parseNumber($input["phone"]);
 
             $savedUser = User::create($input);
 
@@ -50,7 +56,7 @@ class UsersController extends Controller
     public function show(Request $request)
     {
         try {   
-            $user = User::where("id",$request->user()->id)->get();
+            $user = User::where("id",$request->user()->id)->firstOrFail();
 
         } catch(ModelNotFoundException $e) {
         
@@ -68,6 +74,38 @@ class UsersController extends Controller
             "success"=>[
                 "status_code"=>200,
                 "message" => "A user you have asked for, a user you shall receive.",
+                "user" => $user
+            ]
+        ]); 
+    }
+
+    public function contacts(Request $request)
+    {
+        $user = $request->user();
+
+        $numbers = $request->input("numbers");
+
+        $phoneArray = collect([]);
+
+        foreach ($numbers as $number) {
+            
+            $number = $this->parseNumber($number);
+
+            $phoneArray->push($number);
+        }
+
+        $friend = User::whereIn("phone",$phoneArray)->get();
+
+        $friendIds = $friend->pluck("id");
+        
+        $user->friends()->sync($friendIds->toArray());
+
+        $user = User::where("id",$user->id)->with("friends")->get();
+
+        return response()->json([
+            "success"=>[
+                "status_code"=>200,
+                "message" => "Here are your friends!.",
                 "user" => $user
             ]
         ]); 
