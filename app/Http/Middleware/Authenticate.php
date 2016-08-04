@@ -35,8 +35,21 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
+
+        // Override auth is has app secret
+        // This is for creating new users from node
+        if($request->header('api-secret') == env("API_SECRET")) {
+            return $next($request);
+        }
+
+        // If not authorised
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+            return response()->json(['error' => [
+                    'message' => "Hold it cowboy! Get outta here ya hear!",
+                    'status_code' => 401,
+                    'path' => $request->path(),
+                    'method' => $request->method()
+                ]],401);
         }
 
         return $next($request);

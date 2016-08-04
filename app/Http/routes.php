@@ -12,5 +12,19 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->version();
+
+	return response()->json([
+            "success"=>[
+                "status_code"=>200,
+                "message" => "Welcome to did it. Boast about your conquests."
+            ]
+        ]); 
+});
+
+
+$app->group(['prefix' => 'api/v1','middleware'=>'auth','namespace'=>"App\Http\Controllers"], function () use ($app) {
+	
+	// Create a user
+	$app->post('users', "UsersController@store");
+
 });
