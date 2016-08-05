@@ -33,6 +33,9 @@ $app->group(['prefix' => 'api/v1','middleware'=>'auth','namespace'=>"App\Http\Co
 	// Get a user
 	$app->get('users', "UsersController@show");	
 
+	// Update a user
+	$app->put('users', "UsersController@update");
+
 	// Post contacts
 	$app->post('contacts', "UsersController@contacts");	
 

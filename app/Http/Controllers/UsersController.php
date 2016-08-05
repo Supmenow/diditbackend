@@ -115,6 +115,21 @@ class UsersController extends Controller
         ]); 
     }
 
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        $user = $user->update($request->all());
+
+        return response()->json([
+            "success"=>[
+                "status_code"=>200,
+                "message" => "The user has been udpated!",
+                "user" => $user
+            ]
+        ]); 
+    }
+
     public function contacts(Request $request)
     {
         $user = $request->user();
