@@ -39,4 +39,8 @@ $app->group(['prefix' => 'api/v1','middleware'=>'auth','namespace'=>"App\Http\Co
 	// Post contacts
 	$app->post('contacts', "UsersController@contacts");	
 
+	// Send a Dong
+	$app->post('send',"NotificationsController@send");
+	
+
 });
