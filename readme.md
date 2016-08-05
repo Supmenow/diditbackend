@@ -29,9 +29,13 @@ The API for the Did it app
 1. POST to http://139.59.184.179/api/v1/contacts (IP will change to URI soon)
 2. Pass api-key in header as user api-key
 3. Pass a list of phone numbers {"numbers":["+331234123123","(+44)1234233123","00449384123123","07384123123","019384123123"]}
+4. A user is friended with those users who's numbers they have and the friendships are recipricol.
+5. The user and friend are subscribed to the topics
 4. You will get the user back and the friends
+5. THIS REQUEST IS A LONG.
 
 # Send a dong
 1. POST to http://139.59.184.179/api/v1/send (IP will change to URI soon)
 2. Pass api-key in header as user api-key
 3. You will receive a 200 response with the user data.
+ 

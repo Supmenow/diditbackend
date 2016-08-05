@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Traits\ParseNumbers;
 use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Log;
 
 class UsersController extends Controller
 {
@@ -143,16 +144,31 @@ class UsersController extends Controller
             $number = $this->parseNumber($number);
 
             $phoneArray->push($number);
+
         }
 
         $friend = User::whereIn("phone",$phoneArray)->where("phone","!=",$user->phone)->groupBy("phone")->get();
 
         $friendIds = $friend->pluck("id");
 
-
         $user->friends()->sync($friendIds->toArray());
 
         $user = User::where("id",$user->id)->with("friends")->first();
+
+        $friends = User::whereIn("id",$friendIds->toArray())->with("friends")->get();
+
+        foreach ($friends as $friend) 
+        {
+            $this->subscribeToTopic($user->iid_token,$friend->id);
+
+            $friendOfFriend = $friend->friends->pluck("pivot")->pluck("friend_id");
+
+            if( in_array($user->id, $friendOfFriend->toArray())) continue;
+
+            $this->subscribeToTopic($friend->iid_token,$user->id);
+
+            $friend->friends()->attach($user->id);
+        }
 
         Log::info("Getting friends for User", ["user"=>$user->name,"phone"=>$user->phone,"contact_count"=>$user->friends->count()]);
 
@@ -163,5 +179,31 @@ class UsersController extends Controller
                 "user" => $user
             ]
         ]); 
+    }
+
+    private function subscribeToTopic($userToken,$friendID)
+    {
+        $curl = curl_init();
+
+        $topic = "user_{$friendID}";
+        curl_setopt_array($curl, [
+            CURLOPT_URL => "https://iid.googleapis.com/iid/v1/{$userToken}/rel/topics/{$topic}",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => true,
+            CURLOPT_HTTPHEADER => array(
+                "authorization: key=AIzaSyBjRxMv8SHt1MgI3L-jYoXK6ST0TfapUOg",
+                "content-type: application/json"
+            )
+        ]);
+        
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $response;
     }
 }
