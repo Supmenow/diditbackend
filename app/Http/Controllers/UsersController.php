@@ -131,14 +131,23 @@ class UsersController extends Controller
         ]); 
     }
 
+    /**
+     * Parse contacts and register friends
+     * @param  Request $request The incomming request
+     */
     public function contacts(Request $request)
     {
+        // Fetch the user from the Authenticated request
         $user = $request->user();
 
+        // Grab the numbers from the request
         $numbers = $request->input("numbers");
 
+        // Create a collection
         $phoneArray = collect([]);
 
+        // Loop through the numbers, parse them and
+        // push to $phoneArray
         foreach ($numbers as $number) {
             
             $number = $this->parseNumber($number);
@@ -147,26 +156,18 @@ class UsersController extends Controller
 
         }
 
-        $friend = User::whereIn("phone",$phoneArray)->where("phone","!=",$user->phone)->groupBy("phone")->get();
+        // Get all related friends
+        $friends = User::whereIn("phone",$phoneArray)->where("phone","!=",$user->phone)->groupBy("phone")->get();
 
-        $friendIds = $friend->pluck("id");
+        // Grab the ids
+        $friendIds = $friends->pluck("id");
 
+        // Sync up the friends
         $user->friends()->sync($friendIds->toArray());
 
-        $user = User::where("id",$user->id)->with("friends")->first();
-
-        $friends = User::whereIn("id",$friendIds->toArray())->with("friends")->get();
-
+        // Update recip relationships
         foreach ($friends as $friend) 
         {
-            $this->subscribeToTopic($user->iid_token,$friend->id);
-
-            $friendOfFriend = $friend->friends->pluck("pivot")->pluck("friend_id");
-
-            if( in_array($user->id, $friendOfFriend->toArray())) continue;
-
-            $this->subscribeToTopic($friend->iid_token,$user->id);
-
             $friend->friends()->attach($user->id);
         }
 
@@ -179,31 +180,5 @@ class UsersController extends Controller
                 "user" => $user
             ]
         ]); 
-    }
-
-    private function subscribeToTopic($userToken,$friendID)
-    {
-        $curl = curl_init();
-
-        $topic = "user_{$friendID}";
-        curl_setopt_array($curl, [
-            CURLOPT_URL => "https://iid.googleapis.com/iid/v1/{$userToken}/rel/topics/{$topic}",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => true,
-            CURLOPT_HTTPHEADER => array(
-                "authorization: key=AIzaSyBjRxMv8SHt1MgI3L-jYoXK6ST0TfapUOg",
-                "content-type: application/json"
-            )
-        ]);
-        
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-
-        return $response;
     }
 }
