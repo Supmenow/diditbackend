@@ -28,7 +28,7 @@ class NotificationsController extends Controller
             
             $message = "{$user->name} just Did It.";
             
-            $this->sendNotification($user->id,$friendIdList,$message);
+            $fcm_message = $this->sendNotification($user->id,$friendIdList,$message);
 
         }
 
@@ -38,11 +38,47 @@ class NotificationsController extends Controller
             "success"=>[
                 "status_code"=>200,
                 "message" => $responseMessage,
+                "fcm_message" => $fcm_message,
                 "user" => $user
             ]
         ]); 
    }
 
+
+   public function reply(Request $request)
+   {
+        $this->validate($request, ['replyTo' => 'required','message'=>'required']);
+
+        $replyID = $request->input("replyTo");
+        $message = $request->input("message");
+        $user = $request->user();
+
+        try {   
+            $replyTarget = User::where("id",$replyID)->firstOrFail();
+
+        } catch(ModelNotFoundException $e) {
+            
+            return response()->json([
+                "error"=>[
+                    "type"=>"ModelNotFoundException",
+                    "message"=>"No such user exits.",
+                    "status_code" => 404
+                ]
+            ],404);
+        }
+
+        $fcm_message = $this->sendNotification($user->id,collect($replyTarget->iid_token),$message);
+
+        return response()->json([  
+            "success"=>[
+                "status_code"=>200,
+                "message" => "Response Sent",
+                "fcm_message" => $fcm_message,
+                "user" => $user
+            ]
+        ]); 
+
+   }
 
    private function sendNotification($senderID,$recieverIID,$message)
     {

@@ -25,8 +25,6 @@ $app->get('/', function () use ($app) {
 
 $app->group(['prefix' => 'api/v1','middleware'=>'auth','namespace'=>"App\Http\Controllers"], function () use ($app) {
 	
-	
-	
 	// Create a user
 	$app->post('users', "UsersController@store");
 
@@ -45,5 +43,6 @@ $app->group(['prefix' => 'api/v1','middleware'=>'auth','namespace'=>"App\Http\Co
 	// Send a Dong
 	$app->post('send',"NotificationsController@send");
 
-
+	// Reply to a Dong
+	$app->post('reply',"NotificationsController@reply");
 });
