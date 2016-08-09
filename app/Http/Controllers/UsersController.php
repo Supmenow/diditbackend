@@ -23,7 +23,7 @@ class UsersController extends Controller
     {
 
         // This is validating the Firebase structure
-        $this->validate($request, ['phone' => 'required','name'=>'required']);
+        $this->validate($request, ['phone' => 'required','name'=>'required','proto'=>'required']);
 
         try {
 
@@ -59,7 +59,7 @@ class UsersController extends Controller
 
     public function check(Request $request)
     {
-        $this->validate($request, ['phone' => 'required']);
+        $this->validate($request, ['phone' => 'required',]);
 
         $number = $this->parseNumber($request->input("phone"));
 
@@ -119,6 +119,17 @@ class UsersController extends Controller
     public function update(Request $request)
     {
         $user = $request->user();
+
+
+        if ( $request->has("device_token")) {
+
+            $pushd = json_decode($this->register($user,$request->input("device_token")));
+            
+            $this->subscribe($pushd->id,"country_{$user->country_id}");
+
+            $request->merge(["pushd_id" => $pushd->id]);
+
+        }   
 
         $user = $user->update($request->all());
 
