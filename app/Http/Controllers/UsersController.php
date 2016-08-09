@@ -121,24 +121,23 @@ class UsersController extends Controller
     {
         $user = $request->user();
 
-        if ( $request->has("device_token")) {
+        if ( $request->has("device_token")) {   
 
-            $request->device_token = preg_replace('/\s+/', '', $request->device_token);
+            $cleanedDeviceToken = preg_replace('/\s+/', '', $request->device_token);
             
-            return $pushd = json_decode($this->register($user,$request->input("device_token")));
-                
-            $this->subscribe($pushd->id,"country_{$user->country_id}");
+            $pushd = json_decode($this->register($user,$cleanedDeviceToken));
+
+            $request->merge(["device_token" => $cleanedDeviceToken]);
 
             $request->merge(["pushd_id" => $pushd->id]);
-
         }   
 
-        $user = $user->update($request->all());
+        $user->update($request->all());
 
         return response()->json([
             "success"=>[
                 "status_code"=>200,
-                "message" => "The user has been udpated!",
+                "message" => "The user has been updated!",
                 "user" => $user
             ]
         ]); 
