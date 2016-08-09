@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Traits\ParseNumbers;
+use App\Traits\PushdTrait;
 use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ use Log;
 class UsersController extends Controller
 {
 
-    use ParseNumbers;
+    use ParseNumbers, PushdTrait;
 
     /**
      * Creates a user
@@ -23,7 +24,7 @@ class UsersController extends Controller
     {
 
         // This is validating the Firebase structure
-        $this->validate($request, ['phone' => 'required','name'=>'required']);
+        $this->validate($request, ['phone' => 'required','name'=>'required','proto'=>'required']);
 
         try {
 
@@ -118,14 +119,27 @@ class UsersController extends Controller
 
     public function update(Request $request)
     {
+        $this->validate($request, ['device_token' => 'required',"proto"=>"required"]);
+
         $user = $request->user();
 
-        $user = $user->update($request->all());
+        if ( $request->has("device_token")) {   
+
+            $cleanedDeviceToken = preg_replace('/\s+/', '', $request->device_token);
+            
+            $pushd = json_decode($this->register($user,$cleanedDeviceToken));
+
+            $request->merge(["device_token" => $cleanedDeviceToken]);
+
+            $request->merge(["pushd_id" => $pushd->id]);
+        }   
+
+        $user->update($request->all());
 
         return response()->json([
             "success"=>[
                 "status_code"=>200,
-                "message" => "The user has been udpated!",
+                "message" => "The user has been updated!",
                 "user" => $user
             ]
         ]); 
@@ -165,9 +179,18 @@ class UsersController extends Controller
         // Sync up the friends
         $user->friends()->sync($friendIds->toArray());
 
+
         // Update recip relationships
         foreach ($friends as $friend) 
         {
+            $friendOfFriend = $friend->friends->pluck("pivot")->pluck("friend_id");
+
+            if( in_array($user->id, $friendOfFriend->toArray())) continue;
+
+            $this->subscribe($user->pushd_id,$friend->pushd_id);
+
+            $this->subscribe($friend->pushd_id,$user->pushd_id);
+
             $friend->friends()->attach($user->id);
         }
 

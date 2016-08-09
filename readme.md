@@ -4,7 +4,7 @@ The API for the Did it app
 
 # Create a user
 1. POST to http://139.59.184.179/api/v1/users (IP will change to URI soon)
-2. POST raw data as {"name":"Legend","phone":"00000000"}. 
+2. POST raw data as {"name":"Legend","phone":"00000000","proto":"gcm|apns"}. 
 3. Provide header of "api-secret" = 75bf2f1b372ce11b1b082b6a5b64c504be56e00fa4cfd5c8cae29fa540a4c2ec
 4. You will receive a 200 response with the user data.
 
@@ -21,7 +21,7 @@ The API for the Did it app
 
 # Update a user
 1. PUT to http://139.59.184.179/api/v1/users (IP will change to URI soon)
-2. PUT raw data as {"name":"###","phone":"###","iid_token":"###"}. 
+2. PUT raw data as {"name":"###","phone":"###","device_token":"###","device_token":"###"}. 
 3. Pass api-key in header as user api-key
 4. You will receive a 200 response with the user data.
 
@@ -40,6 +40,6 @@ The API for the Did it app
 # Reply to a dong
 1. POST to http://139.59.184.179/api/v1/reply (IP will change to URI soon)
 2. Pass api-key in header as user api-key
-3. Pass the userID {"userID":"###","message":"####"}
+3. Pass the userID {"replyToID":"###","message":"####"} - replyToID = the user you are replying to
 4. You will receive a 200 response with the user data and the number of notifications sent.
  

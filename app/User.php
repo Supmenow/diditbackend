@@ -18,7 +18,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name','phone','api-key','iid_token'
+        "name","phone","api-key","proto","device_token","pushd_id"
     ];
 
     /**
@@ -33,6 +33,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function friends()
     {
-        return $this->belongsToMany('App\User', 'friends', 'user_id', 'friend_id');
+        return $this->belongsToMany('App\User', 'friends', 'user_id', 'friend_id')->withTimestamps();
     }
 }
