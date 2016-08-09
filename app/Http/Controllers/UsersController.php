@@ -60,7 +60,7 @@ class UsersController extends Controller
 
     public function check(Request $request)
     {
-        $this->validate($request, ['phone' => 'required',]);
+        $this->validate($request, ['phone' => 'required']);
 
         $number = $this->parseNumber($request->input("phone"));
 
@@ -119,6 +119,8 @@ class UsersController extends Controller
 
     public function update(Request $request)
     {
+        $this->validate($request, ['device_token' => 'required',"proto"=>"required"]);
+
         $user = $request->user();
 
         if ( $request->has("device_token")) {   
