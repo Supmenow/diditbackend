@@ -17,6 +17,9 @@ class AddUsersTable extends Migration
             $table->string('name');
             $table->string('phone');
             $table->string('api-key');
+            $table->string("proto")->nullable();
+            $table->string("device_token")->nullable();
+            $table->string("pushd_id")->nullable();
             $table->timestamps();
         });
     }
