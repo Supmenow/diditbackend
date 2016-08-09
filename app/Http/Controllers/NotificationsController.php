@@ -33,7 +33,7 @@ class NotificationsController extends Controller
    {
         $this->validate($request, ['replyTo' => 'required','message'=>'required']);
 
-        $replyID = $request->input("replyTo");
+        $replyID = $request->input("replyToID");
         
         $message = $request->input("message");
 
