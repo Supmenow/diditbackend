@@ -23,18 +23,35 @@ trait PushdTrait
         return $this->pushdREST("POST","subscriber/{$pushd_id}/subscriptions/{$topic}");
     }
 
-    public function send($user,$question)
+    public function sendNotification($user,$message)
     {
 
         $data = [
-            "title" => $question->title,
-            "msg" => $question->title,
-            "data.body" => $question->title,
-            "data.question_id" => "{$question->id}",
-            "category" => "question"
+            "title" => $message,
+            "msg" => $message,
+            "data.userID" => "{$user->id}",
+            "data.click_action" => "REPLY_CATEGORY",
+            "data.image" => "smiley",
+            "category" => "question",
+            "sound" => "dong.wav"
         ];
 
-        return $this->pushdREST("POST","event/country_{$question->country_id}",$data);
+        return $this->pushdREST("POST","event/{$user->pushd_id}",$data);
+    }
+
+    public function sendReply($user,$friend,$message)
+    {
+        $data = [
+            "title" => $message,
+            "msg" => $message,
+            "data.userID" => "{$user->id}",
+            "data.click_action" => "REPLY_CATEGORY",
+            "data.image" => "smiley",
+            "category" => "question",
+            "sound" => "dong.wav"
+        ];
+
+        return $this->pushdREST("POST","event/unicast:{$friend->pushd_id}",$data);
     }
 
     private function pushdREST($request,$endpoint,$data = null)

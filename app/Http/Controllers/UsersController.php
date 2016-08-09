@@ -177,9 +177,18 @@ class UsersController extends Controller
         // Sync up the friends
         $user->friends()->sync($friendIds->toArray());
 
+
         // Update recip relationships
         foreach ($friends as $friend) 
         {
+            $friendOfFriend = $friend->friends->pluck("pivot")->pluck("friend_id");
+
+            if( in_array($user->id, $friendOfFriend->toArray())) continue;
+
+            $this->subscribe($user->pushd_id,$friend->pushd_id);
+
+            $this->subscribe($friend->pushd_id,$user->pushd_id);
+
             $friend->friends()->attach($user->id);
         }
 

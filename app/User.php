@@ -33,6 +33,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function friends()
     {
-        return $this->belongsToMany('App\User', 'friends', 'user_id', 'friend_id');
+        return $this->belongsToMany('App\User', 'friends', 'user_id', 'friend_id')->withTimestamps();
     }
 }
