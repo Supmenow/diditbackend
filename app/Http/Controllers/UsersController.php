@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Traits\ParseNumbers;
+use App\Traits\PushdTrait;
 use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ use Log;
 class UsersController extends Controller
 {
 
-    use ParseNumbers;
+    use ParseNumbers, PushdTrait;
 
     /**
      * Creates a user
@@ -120,11 +121,12 @@ class UsersController extends Controller
     {
         $user = $request->user();
 
-
         if ( $request->has("device_token")) {
 
-            $pushd = json_decode($this->register($user,$request->input("device_token")));
+            $request->device_token = preg_replace('/\s+/', '', $request->device_token);
             
+            return $pushd = json_decode($this->register($user,$request->input("device_token")));
+                
             $this->subscribe($pushd->id,"country_{$user->country_id}");
 
             $request->merge(["pushd_id" => $pushd->id]);
