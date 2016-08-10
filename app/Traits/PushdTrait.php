@@ -39,16 +39,16 @@ trait PushdTrait
         return $this->pushdREST("POST","event/{$user->pushd_id}",$data);
     }
 
-    public function sendReply($user,$friend,$message)
+    public function sendReply($user,$friend,$message,$image,$sound)
     {
         $data = [
             "title" => $message,
             "msg" => $message,
             "data.userID" => "{$user->id}",
             "data.click_action" => "REPLY_CATEGORY",
-            "data.image" => "smiley",
+            "data.image" => $image,
             "category" => "question",
-            "sound" => "dong.wav"
+            "sound" => $sound
         ];
 
         return $this->pushdREST("POST","event/unicast:{$friend->pushd_id}",$data);
