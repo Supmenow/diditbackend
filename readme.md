@@ -21,7 +21,7 @@ The API for the Did it app
 
 # Update a user
 1. PUT to http://139.59.184.179/api/v1/users (IP will change to URI soon)
-2. PUT raw data as {"name":"###","phone":"###","device_token":"###","device_token":"###"}. 
+2. PUT raw data as {"name":"###","phone":"###","proto":"###","device_token":"###"}. 
 3. Pass api-key in header as user api-key
 4. You will receive a 200 response with the user data.
 

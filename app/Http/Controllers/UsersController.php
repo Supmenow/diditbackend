@@ -119,7 +119,7 @@ class UsersController extends Controller
 
     public function update(Request $request)
     {
-        $this->validate($request, ['device_token' => 'required',"proto"=>"required"]);
+        $this->validate($request, ['device_token' => 'required',"proto"=>"required|in:gcm,apns"]);
 
         $user = $request->user();
 
@@ -127,11 +127,23 @@ class UsersController extends Controller
 
             $cleanedDeviceToken = preg_replace('/\s+/', '', $request->device_token);
             
-            $pushd = json_decode($this->register($user,$cleanedDeviceToken));
+            $proto = $request->proto;
+
+            $pushd = json_decode($this->register($proto,$cleanedDeviceToken));
 
             $request->merge(["device_token" => $cleanedDeviceToken]);
 
+            if ( empty( $pushd ) ) {
+                return response()->json([
+                    "error"=>[
+                        "status_code"=>400,
+                        "message" => "Incorrect set up of notification registration!"
+                    ]
+                ],400); 
+            }
+
             $request->merge(["pushd_id" => $pushd->id]);
+            
         }   
 
         $user->update($request->all());

@@ -7,13 +7,12 @@ use Illuminate\Support\Str;
 trait PushdTrait
 {
 
-    public function register($user,$device_token)
+    public function register($proto,$device_token)
     {
         $data = [
-            "proto" => $user->proto,
+            "proto" => $proto,
             "token" => $device_token
         ];
-
 
         return $this->pushdREST("POST","subscribers",$data);
     }

@@ -47,7 +47,7 @@ class NotificationsController extends Controller
         $sound = $request->input("sound");
 
         $user = $request->user();
-
+        
 
         try {   
             $friend = User::where("id",$replyToID)->firstOrFail();
