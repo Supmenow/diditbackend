@@ -31,16 +31,26 @@ class NotificationsController extends Controller
 
    public function reply(Request $request)
    {
-        $this->validate($request, ['replyTo' => 'required','message'=>'required']);
+        $this->validate($request, [
+            'replyToID' => 'required',
+            'message'=>'required',
+            'image' => 'required',
+            'sound' => 'required'
+        ]);
 
-        $replyID = $request->input("replyToID");
+        $replyToID = $request->input("replyToID");
         
         $message = $request->input("message");
 
+        $image = $request->input("image");
+
+        $sound = $request->input("sound");
+
         $user = $request->user();
 
+
         try {   
-            $friend = User::where("id",$replyID)->firstOrFail();
+            $friend = User::where("id",$replyToID)->firstOrFail();
 
         } catch(ModelNotFoundException $e) {
             
@@ -53,7 +63,7 @@ class NotificationsController extends Controller
             ],404);
         }
 
-        $this->sendReply($user,$friend,$message);
+        $this->sendReply($user,$friend,$message,$image,$sound);
 
         return response()->json([  
             "success"=>[
