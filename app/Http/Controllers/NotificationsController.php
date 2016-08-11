@@ -45,7 +45,7 @@ class NotificationsController extends Controller
 
         $replyToID = $request->input("replyToID");
         
-        $message = $request->input("message");
+        $message = "{$user->name}: {$request->input("message")}";
 
         $image = $request->input("image");
 
