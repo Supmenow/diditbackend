@@ -22,7 +22,7 @@ trait PushdTrait
         return $this->pushdREST("POST","subscriber/{$pushd_id}/subscriptions/{$topic}");
     }
 
-    public function sendNotification($user,$message)
+    public function sendNotification($user,$message,$target)
     {
 
         $data = [
@@ -35,7 +35,7 @@ trait PushdTrait
             "sound" => "dong.wav"
         ];
 
-        return $this->pushdREST("POST","event/{$user->pushd_id}",$data);
+        return $this->pushdREST("POST","event/unicast:{$target}",$data);
     }
 
     public function sendReply($user,$friend,$message,$image,$sound)

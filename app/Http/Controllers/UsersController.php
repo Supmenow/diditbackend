@@ -199,10 +199,6 @@ class UsersController extends Controller
 
             if( in_array($user->id, $friendOfFriend->toArray())) continue;
 
-            $this->subscribe($user->pushd_id,$friend->pushd_id);
-
-            $this->subscribe($friend->pushd_id,$user->pushd_id);
-
             $friend->friends()->attach($user->id);
         }
 
