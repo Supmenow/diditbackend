@@ -43,6 +43,8 @@ class NotificationsController extends Controller
             'sound' => 'required'
         ]);
 
+        $user = $request->user();
+        
         $replyToID = $request->input("replyToID");
         
         $message = "{$user->name}: {$request->input("message")}";
@@ -50,8 +52,6 @@ class NotificationsController extends Controller
         $image = $request->input("image");
 
         $sound = $request->input("sound");
-
-        $user = $request->user();
         
 
         try {   
