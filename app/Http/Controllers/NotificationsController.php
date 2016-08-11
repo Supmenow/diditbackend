@@ -20,7 +20,7 @@ class NotificationsController extends Controller
         foreach ($user->friends as $friend)
         {
             if($friend->pushd_id) {
-                return $this->sendNotification($user,$message,$friend->pushd_id);
+                $this->sendNotification($user,$message,$friend->pushd_id);
             }
         }
             
