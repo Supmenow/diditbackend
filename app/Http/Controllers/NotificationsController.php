@@ -16,9 +16,14 @@ class NotificationsController extends Controller
         $user = User::where("id",$request->user()->id)->with("friends")->first();
 
         $message = "{$user->name} just Did It.";
-            
-        $this->sendNotification($user,$message);
 
+        foreach ($user->friends as $friend)
+        {
+            if($friend->pushd_id) {
+                return $this->sendNotification($user,$message,$friend->pushd_id);
+            }
+        }
+            
         return response()->json([  
             "success"=>[
                 "status_code"=>200,
