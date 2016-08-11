@@ -35,7 +35,7 @@ The API for the Did it app
 # Send a dong
 1. POST to http://139.59.184.179/api/v1/send (IP will change to URI soon)
 2. Pass api-key in header as user api-key
-3. You will receive a 200 response with the user data and the number of notifications sent.
+3. You will receive a 200 response with the user data.
 
 # Reply to a dong
 1. POST to http://139.59.184.179/api/v1/reply (IP will change to URI soon)
@@ -43,3 +43,5 @@ The API for the Did it app
 3. Pass the {"replyToID":"###","message":"####","image":"###",'sound':###} - replyToID = the user you are replying to
 4. You will receive a 200 response with the user data.
  
+# TODO
+1. Clean up pushd when a user updates device_token
