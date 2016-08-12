@@ -22,25 +22,9 @@ trait PushdTrait
         return $this->pushdREST("POST","subscriber/{$pushd_id}/subscriptions/{$topic}");
     }
 
-    public function sendNotification($user,$message,$target)
+    public function sendNotification($user,$target,$message,$image,$sound)
     {
 
-        $data = [
-            "title" => $message,
-            "msg" => $message,
-            "data.userID" => "{$user->id}",
-            "data.click_action" => "REPLY_CATEGORY",
-            "data.image" => "smiley",
-            "data.sound" => "dong.wav",
-            "category" => "REPLY_CATEGORY",
-            "sound" => "dong.wav"
-        ];
-
-        return $this->pushdREST("POST","event/unicast:{$target}",$data);
-    }
-
-    public function sendReply($user,$friend,$message,$image,$sound)
-    {
         $data = [
             "title" => $message,
             "msg" => $message,
@@ -52,7 +36,7 @@ trait PushdTrait
             "sound" => $sound
         ];
 
-        return $this->pushdREST("POST","event/unicast:{$friend->pushd_id}",$data);
+        return $this->pushdREST("POST","event/unicast:{$target}",$data);
     }
 
     private function pushdREST($request,$endpoint,$data = null)
