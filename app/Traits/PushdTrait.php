@@ -47,7 +47,7 @@ trait PushdTrait
             "data.userID" => "{$user->id}",
             "data.click_action" => "REPLY_CATEGORY",
             "data.image" => $image,
-            "data.sound" => "dong.wav",
+            "data.sound" => $sound,
             "category" => "REPLY_CATEGORY",
             "sound" => $sound
         ];
