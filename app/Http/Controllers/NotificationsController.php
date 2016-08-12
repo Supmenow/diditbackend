@@ -12,15 +12,26 @@ class NotificationsController extends Controller
 
    public function send(Request $request)
    {
+
+        $this->validate($request, [
+            'message'=>'required',
+            'image' => 'required',
+            'sound' => 'required'
+        ]);
+
         // User
         $user = User::where("id",$request->user()->id)->with("friends")->first();
 
-        $message = "{$user->name} just Did It.";
+        $message = "{$user->name}: {$request->input("message")}";
+
+        $image = $request->input("image");
+
+        $sound = $request->input("sound");
 
         foreach ($user->friends as $friend)
         {
             if($friend->pushd_id) {
-                $this->sendNotification($user,$message,$friend->pushd_id);
+                $this->sendNotification($user,$friend->pushd_id,$message,$image,$sound);
             }
         }
             
@@ -68,7 +79,7 @@ class NotificationsController extends Controller
             ],404);
         }
 
-        $this->sendReply($user,$friend,$message,$image,$sound);
+        $this->sendNotification($user,$friend->pushd_id,$message,$image,$sound);
 
         return response()->json([  
             "success"=>[
