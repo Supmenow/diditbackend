@@ -22,7 +22,13 @@ class NotificationsController extends Controller
         // User
         $user = User::where("id",$request->user()->id)->with("friends")->first();
 
-        $message = "{$user->name}: {$request->input("message")}{$request->input("message")}{$request->input("message")}{$request->input("message")}{$request->input("message")}";
+        $message = $request->input("message");
+        
+        $messageArray = explode(" ",$message);
+
+        $message = $messageArray[3];
+
+        $message = "{$user->name}: Just Did It {$message}{$message}{$message}{$message}{$message}";
 
         $image = $request->input("image");
 
